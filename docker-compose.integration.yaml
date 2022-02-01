@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  mvcapp:
+    image: "mvcapp:B${BUILD_NUMBER}"
+    build:
+      context: .
+  integration:
+    depends_on:
+      - mvcapp
+    image: "mvcapp:test-B${BUILD_NUMBER}"
+    build:
+      context: .
+      dockerfile: Dockerfile.Integration
+    environment:
+      - TEAMCITY_PROJECT_NA
