@@ -1,13 +1,14 @@
 node() {
 
-    stage 'Slack Start Notification'
-        slackNotification('STARTED')
+    // stage 'Slack Start Notification'
 
     stage 'Checkout'
         checkout scm
+        slackNotification('STARTED')
 
     stage 'Build & UnitTest'
         sh "docker build -t mvcapp:B${BUILD_NUMBER} -f Dockerfile ."
+        slackNotification(currentBuild.result)
     // sh "docker build -t mvcapp:test-B${BUILD_NUMBER} -f Dockerfile.Integration ."
 
     stage 'Pusblish UT Reports'
@@ -20,9 +21,10 @@ node() {
         sh "docker stop ${containerID}"
         sh "docker rm ${containerID}"
         step([$class: 'MSTestPublisher', failOnError: false, testResultsFile: 'test_results.xml'])
-
-    stage 'Slack Result Notification'
         slackNotification(currentBuild.result)
+
+    // stage 'Slack Result Notification'
+    //     slackNotification(currentBuild.result)
 
     // stage 'Integration Test'
     //     sh "docker-compose -f docker-compose.integration.yaml up --force-recreate --abort-on-container-exit"
