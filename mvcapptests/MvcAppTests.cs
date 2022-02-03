@@ -18,6 +18,6 @@ public class MvcAppTests
         System.Diagnostics.Debug.WriteLine($"View Name is: {name}");
         System.Type expectedType = typeof(ViewResult);
         Assert.IsInstanceOfType(result, expectedType);
-        Assert.AreEqual("Privacy2", name);
+        Assert.AreEqual("Privacy", name);
     }
 }
