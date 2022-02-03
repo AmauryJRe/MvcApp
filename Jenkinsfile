@@ -40,9 +40,7 @@ def slackNotification(String buildStatus){
     // Default values
     String color = 'RED'
     String colorCode = '#FF0000'
-    String subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-    String summary = "${subject} (${env.BUILD_URL})"
-
+    String subject = "${buildStatus}:  - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     // Override default values based on build status
     if (buildStatus == 'STARTED') {
         color = 'YELLOW'
@@ -56,5 +54,5 @@ def slackNotification(String buildStatus){
     }
 
     // Send notifications
-    slackSend (color: colorCode, message: summary)
+    slackSend (color: colorCode, message: subject)
 }
