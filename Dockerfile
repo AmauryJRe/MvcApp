@@ -35,5 +35,5 @@ RUN dotnet publish -c release -o /app --no-restore
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS runtime
 WORKDIR /app
 COPY --from=build /app .
-COPY --from=build-image /TestResults /TestResults
+COPY --from=build /TestResults /TestResults
 ENTRYPOINT ["dotnet", "mvcapp.dll"]
