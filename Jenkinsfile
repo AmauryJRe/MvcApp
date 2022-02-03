@@ -6,7 +6,6 @@ node() {
 
         stage 'Build & UnitTest'
             sh "docker build -t mvcapp:B${BUILD_NUMBER} -f Dockerfile ."
-            slackNotification(currentBuild.result)
         // sh "docker build -t mvcapp:test-B${BUILD_NUMBER} -f Dockerfile.Integration ."
 
         stage 'Pusblish UT Reports'
