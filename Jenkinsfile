@@ -15,7 +15,7 @@ node() {
         sh "docker cp ${containerID}:/TestResults/test_results.xml test_results.xml"
         sh "docker stop ${containerID}"
         sh "docker rm ${containerID}"
-        // step([$class: 'MSTestPublisher', failOnError: false, testResultsFile: 'test_results.xml'])
+        step([$class: 'MSTestPublisher', failOnError: false, testResultsFile: 'test_results.xml'])
     // stage 'Integration Test'
     //     sh "docker-compose -f docker-compose.integration.yaml up --force-recreate --abort-on-container-exit"
     //     sh "docker-compose -f docker-compose.integration.yaml down -v"
