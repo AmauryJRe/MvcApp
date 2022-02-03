@@ -36,4 +36,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS runtime
 WORKDIR /app
 COPY --from=build /app .
 COPY --from=build /TestResults /TestResults
+RUN ls -l
 ENTRYPOINT ["dotnet", "mvcapp.dll"]
