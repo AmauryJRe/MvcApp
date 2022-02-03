@@ -1,28 +1,31 @@
 node() {
+    try{
+        stage 'Checkout'
+            checkout scm
+            slackNotification('STARTED')
 
-    // stage 'Slack Start Notification'
+        stage 'Build & UnitTest'
+            sh "docker build -t mvcapp:B${BUILD_NUMBER} -f Dockerfile ."
+            slackNotification(currentBuild.result)
+        // sh "docker build -t mvcapp:test-B${BUILD_NUMBER} -f Dockerfile.Integration ."
 
-    stage 'Checkout'
-        checkout scm
-        slackNotification('STARTED')
+        stage 'Pusblish UT Reports'
+            containerID = sh (
+                    script: "docker run -d mvcapp:B${BUILD_NUMBER}",
+                returnStdout: true
+                ).trim()
+            echo "Container ID is ==> ${containerID}"
+            sh "docker cp ${containerID}:/TestResults/test_results.xml test_results.xml"
+            sh "docker stop ${containerID}"
+            sh "docker rm ${containerID}"
+            step([$class: 'MSTestPublisher', failOnError: false, testResultsFile: 'test_results.xml'])
 
-    stage 'Build & UnitTest'
-        sh "docker build -t mvcapp:B${BUILD_NUMBER} -f Dockerfile ."
+    } catch(e){
+        currentBuild.result = 'FAILED'
+        throw e
+    } finally {
         slackNotification(currentBuild.result)
-    // sh "docker build -t mvcapp:test-B${BUILD_NUMBER} -f Dockerfile.Integration ."
-
-    stage 'Pusblish UT Reports'
-        containerID = sh (
-            script: "docker run -d mvcapp:B${BUILD_NUMBER}",
-        returnStdout: true
-        ).trim()
-        echo "Container ID is ==> ${containerID}"
-        sh "docker cp ${containerID}:/TestResults/test_results.xml test_results.xml"
-        sh "docker stop ${containerID}"
-        sh "docker rm ${containerID}"
-        step([$class: 'MSTestPublisher', failOnError: false, testResultsFile: 'test_results.xml'])
-        slackNotification(currentBuild.result)
-
+    }
     // stage 'Slack Result Notification'
     //     slackNotification(currentBuild.result)
 
